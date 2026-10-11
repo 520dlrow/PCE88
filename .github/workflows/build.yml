@@ -1,0 +1,68 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Download fonts and icons
+        run: |
+          mkdir -p app/src/main/assets/fonts
+          mkdir -p app/src/main/assets/fontawesome/css
+          mkdir -p app/src/main/assets/fontawesome/webfonts
+
+          download() {
+            local url="$1"
+            local out="$2"
+            curl -sSL -o "$out" "$url" 2>/dev/null
+            local size=$(stat -c%s "$out" 2>/dev/null || echo 0)
+            if [ "$size" -lt 500 ]; then
+              echo "⚠ $out ($size bytes)"
+              rm -f "$out"
+            else
+              echo "✓ $out ($size bytes)"
+            fi
+          }
+
+          # Inter — five weights used by the CSS
+          download "https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.woff2" app/src/main/assets/fonts/inter-400.woff2
+          download "https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-500-normal.woff2" app/src/main/assets/fonts/inter-500.woff2
+          download "https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.woff2" app/src/main/assets/fonts/inter-600.woff2
+          download "https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.woff2" app/src/main/assets/fonts/inter-700.woff2
+          download "https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-800-normal.woff2" app/src/main/assets/fonts/inter-800.woff2
+
+          # Font Awesome 6.5.0
+          download "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" app/src/main/assets/fontawesome/css/all.min.css
+          download "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.woff2" app/src/main/assets/fontawesome/webfonts/fa-solid-900.woff2
+          download "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-regular-400.woff2" app/src/main/assets/fontawesome/webfonts/fa-regular-400.woff2
+          download "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-brands-400.woff2" app/src/main/assets/fontawesome/webfonts/fa-brands-400.woff2
+
+          # Inter @font-face — kept as-is so 'Inter' resolves locally
+          echo "@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('inter-400.woff2') format('woff2')}" > app/src/main/assets/fonts/inter.css
+          echo "@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('inter-500.woff2') format('woff2')}" >> app/src/main/assets/fonts/inter.css
+          echo "@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('inter-600.woff2') format('woff2')}" >> app/src/main/assets/fonts/inter.css
+          echo "@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('inter-700.woff2') format('woff2')}" >> app/src/main/assets/fonts/inter.css
+          echo "@font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url('inter-800.woff2') format('woff2')}" >> app/src/main/assets/fonts/inter.css
+
+          echo "--- fonts ---"
+          ls -la app/src/main/assets/fonts/
+          echo "--- fontawesome ---"
+          ls -la app/src/main/assets/fontawesome/css/ app/src/main/assets/fontawesome/webfonts/
+
+      - run: gradle assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pce-mauritanie-apk
+          path: app/build/outputs/apk/debug/*.apk
