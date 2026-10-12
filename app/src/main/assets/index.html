@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>PCE Mauritanie · Plan Comptable de l'État</title>
+    <link href="fonts/inter.css" rel="stylesheet">
+    <link rel="stylesheet" href="fontawesome/css/all.min.css">
+    <style>
+        /* --- RESET & BASE --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e293b;
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border: #e2e8f0;
+            --radius: 16px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            --font: 'Inter', -apple-system, sans-serif;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* --- THEMES --- */
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --primary: #60a5fa;
+            --primary-light: #93bbfc;
+            --primary-dark: #1e293b;
+        }
+
+        [data-theme="dark"] .search-box {
+            background: #1e293b;
+        }
+
+        [data-theme="dark"] .result-item {
+            border-bottom-color: #334155;
+        }
+
+        [data-theme="dark"] .result-item:hover {
+            background: #2d3a4f;
+        }
+
+        [data-theme="dark"] .sort-btn {
+            background: #1e293b;
+            border-color: #334155;
+            color: #94a3b8;
+        }
+
+        [data-theme="dark"] .sort-btn.active {
+            background: var(--primary);
+            color: #0f172a;
+            border-color: var(--primary);
+        }
+
+        [data-theme="dark"] .app-footer {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        [data-theme="dark"] .search-box input {
+            color: #f1f5f9;
+        }
+
+        [data-theme="dark"] .search-box input::placeholder {
+            color: #64748b;
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            background: #1e293b;
+            border-color: #334155;
+            color: #94a3b8;
+        }
+
+        [data-theme="dark"] .theme-toggle:hover {
+            background: #2d3a4f;
+            color: #f1f5f9;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background var(--transition), color var(--transition);
+        }
+
+        .app-container {
+            max-width: 860px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* --- HEADER --- */
+        .app-header {
+            text-align: center;
+            padding: 20px 0 16px;
+            position: relative;
+        }
+
+        .app-header .top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .app-header h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .app-header h1 i {
+            color: var(--primary-light);
+            font-size: 2rem;
+        }
+
+        .app-header .sub {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font);
+            box-shadow: var(--shadow);
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        .theme-toggle i {
+            font-size: 1.1rem;
+        }
+
+        /* --- STATS BAR --- */
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            padding: 8px 0 16px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .stats-bar .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stats-bar .stat-item i {
+            color: var(--primary-light);
+        }
+
+        .stats-bar .stat-item strong {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        /* --- SEARCH --- */
+        .search-box {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 4px 4px 4px 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: border-color var(--transition), box-shadow var(--transition);
+            margin-bottom: 8px;
+        }
+
+        .search-box:focus-within {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        .search-box i {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            padding: 14px 0;
+            background: transparent;
+            font-family: var(--font);
+            color: var(--text-main);
+            min-width: 0;
+        }
+
+        .search-box input::placeholder {
+            color: #94a3b8;
+        }
+
+        .search-box .clear-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            transition: background var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-box .clear-btn:hover {
+            background: #f1f5f9;
+            color: var(--text-main);
+        }
+
+        .search-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-left: 4px;
+        }
+
+        .search-hint i {
+            color: var(--primary-light);
+        }
+
+        /* --- RESULTS HEADER --- */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .results-header .count {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .results-header .count strong {
+            color: var(--text-main);
+        }
+
+        .sort-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sort-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: var(--font);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow);
+        }
+
+        .sort-btn:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .sort-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* --- LIST --- */
+        .results-list {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            max-height: 62vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            transition: background var(--transition), border var(--transition);
+        }
+
+        .result-item {
+            padding: 14px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: background 0.15s;
+            font-size: 0.95rem;
+        }
+
+        .result-item:active {
+            background: #eef2ff;
+        }
+
+        .result-item .code {
+            font-weight: 700;
+            color: var(--primary-light);
+            font-size: 0.85rem;
+            min-width: 80px;
+            flex-shrink: 0;
+            font-feature-settings: "tnum";
+        }
+
+        .result-item .name {
+            flex: 1;
+            word-break: break-word;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .result-item .badge {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: #f1f5f9;
+            padding: 2px 10px;
+            border-radius: 40px;
+            flex-shrink: 0;
+        }
+
+        .result-item .arrow {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item:hover {
+            background: #f8fafc;
+        }
+
+        .no-results {
+            padding: 48px 20px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .no-results i {
+            font-size: 2.5rem;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        /* --- FOOTER --- */
+        .app-footer {
+            margin-top: 28px;
+            padding: 20px 20px 14px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            transition: all var(--transition);
+        }
+
+        .app-footer .credit {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .app-footer .credit span {
+            color: var(--primary-light);
+        }
+
+        .app-footer .source {
+            margin-top: 4px;
+            font-size: 0.75rem;
+        }
+
+        .app-footer .source a {
+            color: var(--primary-light);
+            text-decoration: none;
+            word-break: break-all;
+            border-bottom: 1px solid transparent;
+            transition: border-color var(--transition);
+        }
+
+        .app-footer .source a:hover {
+            border-bottom-color: var(--primary-light);
+        }
+
+        .app-footer .contact {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 0.8rem;
+        }
+
+        .app-footer .contact a {
+            color: var(--text-muted);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: color var(--transition);
+        }
+
+        .app-footer .contact a:hover {
+            color: var(--primary);
+        }
+
+        .app-footer .contact i {
+            color: var(--primary-light);
+            width: 18px;
+        }
+
+        .app-footer .copyright {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+
+        /* --- SCROLLBAR --- */
+        .results-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .results-list::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        .results-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        [data-theme="dark"] .results-list::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        [data-theme="dark"] .results-list::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 600px) {
+            body { padding: 8px; }
+            .app-header h1 { font-size: 1.4rem; }
+            .app-header h1 i { font-size: 1.4rem; }
+            .app-header .top-row { flex-direction: column; align-items: stretch; }
+            .theme-toggle { justify-content: center; }
+            .search-box { padding: 4px 4px 4px 14px; }
+            .search-box input { font-size: 0.95rem; padding: 12px 0; }
+            .result-item { padding: 12px 14px; font-size: 0.85rem; flex-wrap: wrap; gap: 4px; }
+            .result-item .code { min-width: 65px; font-size: 0.8rem; }
+            .result-item .badge { display: none; }
+            .result-item .name { width: 100%; order: 3; padding-left: 0; }
+            .result-item .arrow { display: none; }
+            .results-header { flex-direction: column; align-items: stretch; gap: 8px; }
+            .sort-group { justify-content: flex-start; }
+            .sort-btn { padding: 6px 12px; font-size: 0.7rem; }
+            .app-footer .contact { flex-direction: column; gap: 6px; align-items: center; }
+            .stats-bar { gap: 12px; font-size: 0.7rem; }
+        }
+
+        @media (max-width: 400px) {
+            .result-item .code { min-width: 55px; font-size: 0.75rem; }
+            .result-item { padding: 10px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- HEADER -->
+    <header class="app-header">
+        <div class="top-row">
+            <h1>
+                <i class="fas fa-landmark"></i>
+                PCE Mauritanie
+            </h1>
+            <button class="theme-toggle" id="themeToggle" aria-label="Changer de thème">
+                <i class="fas fa-moon"></i>
+                <span>Thème</span>
+            </button>
+        </div>
+        <p class="sub">Plan Comptable de l'État · Recherche instantanée · <span id="totalCount">0</span> comptes</p>
+    </header>
+
+    <!-- STATS BAR -->
+    <div class="stats-bar" id="statsBar">
+        <span class="stat-item"><i class="fas fa-layer-group"></i> Classes : <strong>8</strong></span>
+        <span class="stat-item"><i class="fas fa-hashtag"></i> Comptes : <strong id="totalAccounts">0</strong></span>
+        <span class="stat-item"><i class="fas fa-check-circle"></i> Taux de couverture : <strong>100%</strong></span>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Code ou intitulé (ex: 212, Bâtiment, Dette...)" autocomplete="off" autofocus>
+        <button class="clear-btn" id="clearBtn" aria-label="Effacer"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="search-hint">
+        <i class="fas fa-info-circle"></i>
+        <span>Recherche par code numérique ou mot-clé · <kbd style="background:var(--border);padding:0 6px;border-radius:4px;">Ctrl+K</kbd> pour focus</span>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-header">
+        <span class="count" id="resultCount"><strong>0</strong> comptes</span>
+        <div class="sort-group">
+            <button class="sort-btn active" id="sortCode"><i class="fas fa-sort-numeric-down"></i> Code</button>
+            <button class="sort-btn" id="sortName"><i class="fas fa-sort-alpha-down"></i> Intitulé</button>
+        </div>
+    </div>
+
+    <div class="results-list" id="resultsList">
+        <div class="no-results">
+            <i class="fas fa-spinner fa-pulse"></i>
+            <p>Chargement du plan comptable...</p>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+        <p class="credit">
+            <i class="fas fa-gavel" style="color: var(--primary-light);"></i>
+            Plan Comptable de l'État · Conforme au PCM &amp; adapté aux spécificités de l'État
+        </p>
+        <p class="source">
+            Source officielle : <a href="https://www.finances.gov.mr/sites/default/files/2022-11/Arr%C3%AAt%C3%A9%20N%C2%B0%2001180-MF-DGTCP-2022%20portant%20approbation%20du%20plan%20comptable%20de%20l'Etat%20conforme%20au%20plan%20comptable%20g%C3%A9n%C3%A9ral%20et%20adopt%C3%A9.pdf" target="_blank" rel="noopener noreferrer">
+                Arrêté N° 01180-MF-DGTCP-2022 · finances.gov.mr
+            </a>
+        </p>
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
+            <i class="fas fa-code"></i> Conception et développement : <strong>MC</strong>
+        </p>
+        <div class="contact">
+            <a href="mailto:mohamed005cheikh@gmail.com">
+                <i class="fas fa-envelope"></i> mohamed005cheikh@gmail.com
+            </a>
+            <a href="https://wa.me/22230726475" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-whatsapp"></i> +222 30 72 64 75
+            </a>
+        </div>
+        <div class="copyright">
+            &copy; 2026 · Outil libre pour les professionnels de la comptabilité publique mauritanienne
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    (function() {
+        // ============================================================
+        // DONNÉES COMPLÈTES DU PLAN COMPTABLE DE L'ÉTAT
+        // ============================================================
+        const ACCOUNTS = [
+            // ===== CLASSE 1 : Comptes de passif non courant =====
+            { code: "101", intitule: "Ecart d'intégration" },
+            { code: "102", intitule: "Intégration au patrimoine" },
+            { code: "103", intitule: "Ecart sur cession d'actifs" },
+            { code: "104", intitule: "Ecart de réévaluation" },
+            { code: "1041", intitule: "Terrains et constructions non spécifiques" },
+            { code: "1042", intitule: "Infrastructures routières" },
+            { code: "1043", intitule: "Bâtiments spécifiques évalués au coût de remplacement déprécié" },
+            { code: "1045", intitule: "Ecart d'équivalence des participations dans des entités contrôlées" },
+            { code: "105", intitule: "Fonds de concours" },
+            { code: "106", intitule: "Dons et legs en capital" },
+            { code: "107", intitule: "Compte de contrepartie des immobilisations mises à disposition de l'Etat" },
+            { code: "1071", intitule: "Immobilisations corporelles mises à disposition de l'Etat" },
+            { code: "1072", intitule: "Immobilisations incorporelles mises à disposition de l'Etat" },
+            { code: "108", intitule: "Contrepartie des immobilisations financières contrôlées sans détention de titres" },
+            { code: "111", intitule: "Correction de la situation nette" },
+            { code: "121", intitule: "Report à nouveau positif" },
+            { code: "129", intitule: "Report à nouveau négatif" },
+            { code: "131", intitule: "Solde des opérations de l'exercice (positif)" },
+            { code: "139", intitule: "Solde des opérations de l'exercice (négatif)" },
+            { code: "141", intitule: "Provision pour risques" },
+            { code: "143", intitule: "Provision pour garantie d'emprunt" },
+            { code: "144", intitule: "Provision pour charges à répartir sur plusieurs exercices" },
+            { code: "148", intitule: "Autres provisions pour risques et charges" },
+            { code: "151", intitule: "Financement intérieur à mobiliser" },
+            { code: "152", intitule: "Financement extérieur à mobiliser" },
+            { code: "1611", intitule: "Bons du Trésor" },
+            { code: "16111", intitule: "Bons du Trésor conventionnels" },
+            { code: "16112", intitule: "Bons du Trésor islamiques" },
+            { code: "1612", intitule: "Emprunts obligataires" },
+            { code: "1613", intitule: "Emprunt BCM-FSD Convention MF" },
+            { code: "1614", intitule: "BCM/MF Convention 2018" },
+            { code: "1621", intitule: "Dette extérieure bilatérale" },
+            { code: "16211", intitule: "Club de Paris" },
+            { code: "16212", intitule: "Extérieur au Club de Paris" },
+            { code: "1622", intitule: "Dette extérieure multilatérale" },
+            { code: "16221", intitule: "Banques internationales" },
+            { code: "16222", intitule: "Organismes et institutions" },
+            { code: "1623", intitule: "Organismes extérieurs privés" },
+            { code: "1628", intitule: "Autres organismes" },
+            { code: "167", intitule: "Dettes assorties de conditions particulières" },
+            { code: "168", intitule: "Autres dettes assimilées" },
+            { code: "1688", intitule: "Intérêts courus" },
+            { code: "173", intitule: "Dette passive (Koweït – Libye)" },
+            { code: "178", intitule: "Conventions à paiement différées" },
+            { code: "181", intitule: "Comptes de liaison avec les comptes spéciaux" },
+            { code: "182", intitule: "Comptes de liaison avec les budgets annexes" },
+            { code: "183", intitule: "Comptes de liaison avec les comptables" },
+            { code: "184", intitule: "Comptes de liaison avec organismes publics" },
+            { code: "188", intitule: "Comptes de liaison avec autres entités" },
+            { code: "1911", intitule: "Dettes rééchelonnées multilatérales" },
+            { code: "1912", intitule: "Dettes rééchelonnées bilatérales Club de Paris" },
+            { code: "1913", intitule: "Dettes rééchelonnées bilatérales Club de Londres" },
+            { code: "1918", intitule: "Dettes rééchelonnées autres organismes extérieurs" },
+            { code: "1921", intitule: "Remises de dettes multilatérales" },
+            { code: "1922", intitule: "Remises de dettes bilatérales Club de Paris" },
+            { code: "1923", intitule: "Remises de dettes bilatérales Club de Londres" },
+            { code: "1928", intitule: "Remises de dettes autres organismes extérieurs" },
+
+            // ===== CLASSE 2 : Comptes d'immobilisations =====
+            { code: "203", intitule: "Frais de recherche et développement" },
+            { code: "204", intitule: "Frais d'études" },
+            { code: "205", intitule: "Concessions, brevets, licences, logiciels, droits et valeurs similaires" },
+            { code: "206", intitule: "Droit au bail" },
+            { code: "2111", intitule: "Terrains nus" },
+            { code: "2112", intitule: "Terrains bâtis" },
+            { code: "21131", intitule: "Terrains agricoles" },
+            { code: "21132", intitule: "Terrains forestiers" },
+            { code: "2114", intitule: "Sous-sols et carrières (Terrains de gisement)" },
+            { code: "2115", intitule: "Terrains en concession" },
+            { code: "2117", intitule: "Agencements et aménagements de terrains" },
+            { code: "2118", intitule: "Autres terrains" },
+            { code: "21211", intitule: "Bâtiments industriels" },
+            { code: "21212", intitule: "Bâtiments agricoles" },
+            { code: "21213", intitule: "Bâtiments administratifs" },
+            { code: "21214", intitule: "Bâtiments commerciaux" },
+            { code: "21215", intitule: "Bâtiments scolaires" },
+            { code: "21216", intitule: "Bâtiments sanitaires" },
+            { code: "21217", intitule: "Bâtiments techniques" },
+            { code: "21218", intitule: "Autres Bâtiments non spécifiés" },
+            { code: "212211", intitule: "Routes bitumées" },
+            { code: "212212", intitule: "Routes non bitumées" },
+            { code: "21222", intitule: "Aéroports et aérodromes" },
+            { code: "21223", intitule: "Infrastructures portuaires" },
+            { code: "21224", intitule: "Ouvrages hydrauliques" },
+            { code: "21225", intitule: "Périmètres agricoles" },
+            { code: "21226", intitule: "Énergie" },
+            { code: "21227", intitule: "Industriels" },
+            { code: "21228", intitule: "Autres infrastructures" },
+            { code: "2131", intitule: "Matériels techniques industriels" },
+            { code: "2132", intitule: "Outillages" },
+            { code: "2133", intitule: "Agencements et aménagements du matériel et outillages techniques" },
+            { code: "2134", intitule: "Matériel technique militaire" },
+            { code: "2137", intitule: "Matériel spécifique" },
+            { code: "2138", intitule: "Autres matériels techniques et outillages" },
+            { code: "21411", intitule: "Matériels d'aviation" },
+            { code: "21412", intitule: "Matériels de transports terrestres" },
+            { code: "21418", intitule: "Autres matériels de transports" },
+            { code: "21421", intitule: "Matériels de communication" },
+            { code: "21422", intitule: "Matériel de défense" },
+            { code: "21428", intitule: "Autres matériels militaires" },
+            { code: "2151", intitule: "Réseaux d'adduction d'eau" },
+            { code: "2152", intitule: "Réseaux d'adduction d'assainissement" },
+            { code: "2153", intitule: "Réseaux d'adduction électriques" },
+            { code: "2154", intitule: "Aménagements hydrauagricoles" },
+            { code: "2158", intitule: "Autres installations complexes spécialisées" },
+            { code: "2161", intitule: "Véhicules" },
+            { code: "2162", intitule: "Autres matériels de transport terrestre" },
+            { code: "2163", intitule: "Matériel de transport aérien" },
+            { code: "2164", intitule: "Matériel de transport maritime" },
+            { code: "2168", intitule: "Autres matériels de transport" },
+            { code: "2171", intitule: "Matériel de bureau" },
+            { code: "2172", intitule: "Matériel informatique" },
+            { code: "2181", intitule: "Diverses immobilisations de mobilier" },
+            { code: "2182", intitule: "Diverses immobilisations: installations et agencements" },
+            { code: "2183", intitule: "Divers immobilisations: œuvres d'art" },
+            { code: "2188", intitule: "Autres immobilisations corporelles" },
+            { code: "221", intitule: "Terrains mis en concessions" },
+            { code: "222", intitule: "Constructions mises en concessions" },
+            { code: "224", intitule: "Installations complexes mises en concessions" },
+            { code: "2303", intitule: "Frais de recherche et de développement en cours" },
+            { code: "2305", intitule: "Concessions, brevets, licences, logiciels en cours" },
+            { code: "2306", intitule: "Frais d'études en cours" },
+            { code: "231111", intitule: "Bâtiments industriels en cours" },
+            { code: "231112", intitule: "Bâtiments agricoles en cours" },
+            { code: "231113", intitule: "Bâtiments administratifs en cours" },
+            { code: "231114", intitule: "Bâtiments commerciaux en cours" },
+            { code: "231115", intitule: "Bâtiments scolaires en cours" },
+            { code: "231116", intitule: "Bâtiments sanitaires en cours" },
+            { code: "231117", intitule: "Bâtiments techniques en cours" },
+            { code: "231118", intitule: "Autres bâtiments en cours" },
+            { code: "231121", intitule: "Routes bitumées en cours" },
+            { code: "231122", intitule: "Routes non bitumées en cours" },
+            { code: "231123", intitule: "Aéroports et aérodromes en cours" },
+            { code: "231124", intitule: "Infrastructures portuaires en cours" },
+            { code: "231125", intitule: "Ouvrages hydrauliques en cours" },
+            { code: "231126", intitule: "Périmètres agricoles en cours" },
+            { code: "231127", intitule: "Énergie en cours" },
+            { code: "231128", intitule: "Industriels en cours" },
+            { code: "231129", intitule: "Autres infrastructures en cours" },
+            { code: "23121", intitule: "Redevances sur immobilisation corporelles en PPP" },
+            { code: "23131", intitule: "Réseaux d'adduction d'eau en cours" },
+            { code: "23132", intitule: "Réseaux d'adduction d'assainissement en cours" },
+            { code: "23133", intitule: "Réseaux d'adduction électriques en cours" },
+            { code: "23134", intitule: "Aménagement hydroagricoles, barrages en cours" },
+            { code: "23138", intitule: "Autres installations complexes spécialisées en cours" },
+            { code: "2318", intitule: "Autres immobilisations corporelles en cours" },
+            { code: "2411", intitule: "Avances sur frais de recherche et développement" },
+            { code: "2412", intitule: "Avances sur concessions, brevets, licences, logiciels" },
+            { code: "2413", intitule: "Avances sur études" },
+            { code: "2416", intitule: "Avances sur droit au bail" },
+            { code: "24211", intitule: "Avances sur bâtiments en cours" },
+            { code: "24212", intitule: "Avances sur ouvrages en cours" },
+            { code: "24251", intitule: "Avances sur réseaux d'adduction d'eau en cours" },
+            { code: "24252", intitule: "Avances sur réseaux d'adduction d'assainissement en cours" },
+            { code: "24253", intitule: "Avances sur réseaux d'adduction électriques en cours" },
+            { code: "24254", intitule: "Avances sur aménagement hydroagricoles, barrages en cours" },
+            { code: "2428", intitule: "Avances sur installations et aménagements" },
+            { code: "251", intitule: "Redevances sur immobilisations corporelles en PPP" },
+            { code: "2611", intitule: "Participations – établissements publics" },
+            { code: "26121", intitule: "Participations – Sociétés Nationales" },
+            { code: "26122", intitule: "Participations – Société d'Économie Mixte hors SNIM" },
+            { code: "26123", intitule: "Participations – Banque Centrale de Mauritanie" },
+            { code: "26124", intitule: "Participations – SNIM" },
+            { code: "2614", intitule: "Participations – sociétés à capitaux privées" },
+            { code: "2618", intitule: "Autres participations – entités contrôlées" },
+            { code: "2661", intitule: "Participations – sociétés à capitaux publics non contrôlées" },
+            { code: "2662", intitule: "Participations – sociétés à capitaux privés non contrôlées" },
+            { code: "2663", intitule: "Participations – organisations internationales" },
+            { code: "2668", intitule: "Autres participations – entités non contrôlées" },
+            { code: "2671", intitule: "Prêts rattachés à des participations" },
+            { code: "2672", intitule: "Avances rattachées à des participations" },
+            { code: "268", intitule: "Produits à recevoir des créances rattachées à des participations" },
+            { code: "269", intitule: "Versements restant à effectuer sur participation" },
+            { code: "271", intitule: "Titres immobilisés autres que les titres de participations" },
+            { code: "27211", intitule: "Prêts aux fonctionnaires et agents de l'Etat" },
+            { code: "272121", intitule: "Prêts aux communes" },
+            { code: "272122", intitule: "Prêts aux régions" },
+            { code: "27213", intitule: "Prêts aux établissements publics" },
+            { code: "27214", intitule: "Prêts aux sociétés d'économies mixtes" },
+            { code: "272151", intitule: "Prêts exceptionnels à d'autres catégories de ménages" },
+            { code: "272152", intitule: "Prêts exceptionnels aux entités privées" },
+            { code: "272153", intitule: "Prêts exceptionnels à d'autres institutions publiques" },
+            { code: "272158", intitule: "Autres prêts exceptionnels" },
+            { code: "27221", intitule: "Avances aux fonctionnaires et agents contractuels de l'Etat" },
+            { code: "272221", intitule: "Avances aux communes" },
+            { code: "272222", intitule: "Avances aux régions" },
+            { code: "27223", intitule: "Avances aux établissements publics" },
+            { code: "27224", intitule: "Avances aux sociétés d'économies mixtes" },
+            { code: "275", intitule: "Dépôts et cautionnement" },
+            { code: "276", intitule: "Mise en jeu de la garantie de l'Etat" },
+            { code: "277", intitule: "Autres créances immobilisées" },
+            { code: "278", intitule: "Intérêts courus sur prêts et avances" },
+            { code: "279", intitule: "Versements restant à effectuer sur titres immobilisés non libérés" },
+            { code: "2803", intitule: "Amortissements des frais de recherche et développement" },
+            { code: "2805", intitule: "Amortissements des concessions, brevets, licences" },
+            { code: "281211", intitule: "Amortissements des bâtiments industriels" },
+            { code: "281212", intitule: "Amortissements des bâtiments agricoles" },
+            { code: "281213", intitule: "Amortissements des bâtiments administratifs" },
+            { code: "281214", intitule: "Amortissements des bâtiments commerciaux" },
+            { code: "281221", intitule: "Amortissements des routes" },
+            { code: "281222", intitule: "Amortissements des aéroports et aérodromes" },
+            { code: "281223", intitule: "Amortissements des infrastructures portuaires" },
+            { code: "281228", intitule: "Amortissements des autres ouvrages d'infrastructures" },
+            { code: "28131", intitule: "Amortissements des matériels techniques industriels" },
+            { code: "28132", intitule: "Amortissements des outillages" },
+            { code: "28138", intitule: "Amortissements des autres matériels techniques et outillages" },
+            { code: "28141", intitule: "Amortissements des matériels d'aviation" },
+            { code: "28142", intitule: "Amortissements des matériels de transports terrestres" },
+            { code: "28143", intitule: "Amortissements des matériels de communication" },
+            { code: "28144", intitule: "Amortissements du matériel de défense" },
+            { code: "28148", intitule: "Amortissements des autres matériels militaires" },
+            { code: "28151", intitule: "Amortissements des réseaux d'adduction d'eau" },
+            { code: "28152", intitule: "Amortissements des réseaux d'adduction d'assainissement" },
+            { code: "28153", intitule: "Amortissements des réseaux d'adduction électriques" },
+            { code: "28154", intitule: "Amortissements des aménagements hydroagricoles, barrages" },
+            { code: "28161", intitule: "Amortissements des véhicules" },
+            { code: "28162", intitule: "Amortissements des autres matériels de transport" },
+            { code: "2817", intitule: "Amortissements du matériel de bureau et informatique" },
+            { code: "28181", intitule: "Amortissements des mobiliers" },
+            { code: "28182", intitule: "Amortissements des installations et agencements" },
+            { code: "28183", intitule: "Amortissements des collections œuvres d'art" },
+            { code: "28188", intitule: "Amortissements des autres immobilisations corporelles" },
+            { code: "289", intitule: "Amortissements des biens affectées, concédées ou mis à disposition" },
+            { code: "2903", intitule: "Dépréciations des frais de recherche et développement" },
+            { code: "2905", intitule: "Dépréciations des concessions, brevets, licences" },
+            { code: "29111", intitule: "Dépréciations des terrains nus" },
+            { code: "29112", intitule: "Dépréciations des terrains bâtis" },
+            { code: "29113", intitule: "Dépréciations des terrains agricoles et forestiers" },
+            { code: "29114", intitule: "Dépréciations des terrains de gisement" },
+            { code: "29115", intitule: "Dépréciations des terrains mis en concession" },
+            { code: "29117", intitule: "Dépréciations des agencements et aménagements de terrains" },
+            { code: "29118", intitule: "Dépréciations des autres terrains" },
+            { code: "291211", intitule: "Dépréciations des bâtiments industriels" },
+            { code: "291212", intitule: "Dépréciations des bâtiments agricoles" },
+            { code: "291213", intitule: "Dépréciations des bâtiments administratifs" },
+            { code: "291214", intitule: "Dépréciations des bâtiments commerciaux" },
+            { code: "291221", intitule: "Dépréciations des routes" },
+            { code: "291222", intitule: "Dépréciations des aéroports et aérodromes" },
+            { code: "291223", intitule: "Dépréciations des infrastructures portuaires" },
+            { code: "291228", intitule: "Dépréciations des autres ouvrages d'infrastructures" },
+            { code: "29131", intitule: "Dépréciations des matériels techniques industriels" },
+            { code: "29132", intitule: "Dépréciations des outillages" },
+            { code: "29138", intitule: "Dépréciations des autres matériels techniques et outillages" },
+            { code: "29141", intitule: "Dépréciations des matériels d'aviation" },
+            { code: "29142", intitule: "Dépréciations des matériels de transports terrestres" },
+            { code: "29143", intitule: "Dépréciations des matériels de communication" },
+            { code: "29144", intitule: "Dépréciations du matériel de défense" },
+            { code: "29148", intitule: "Dépréciations des autres matériels militaires" },
+            { code: "29151", intitule: "Dépréciations des réseaux d'adduction d'eau" },
+            { code: "29152", intitule: "Dépréciations des réseaux d'adduction d'assainissement" },
+            { code: "29153", intitule: "Dépréciations des réseaux d'adduction électriques" },
+            { code: "29154", intitule: "Dépréciations des aménagements hydroagricoles, barrages" },
+            { code: "29161", intitule: "Dépréciations des véhicules" },
+            { code: "29162", intitule: "Dépréciations des autres matériels de transport" },
+            { code: "2917", intitule: "Dépréciations du matériel de bureau et informatique" },
+            { code: "29181", intitule: "Dépréciations des mobiliers" },
+            { code: "29182", intitule: "Dépréciations des installations et agencements" },
+            { code: "29183", intitule: "Dépréciations des collections œuvres d'art" },
+            { code: "29188", intitule: "Dépréciations des autres immobilisations corporelles" },
+            { code: "2921", intitule: "Dépréciations des terrains mis en concessions" },
+            { code: "2922", intitule: "Dépréciations des constructions mises en concessions" },
+            { code: "2924", intitule: "Dépréciations des installations complexes mises en concessions" },
+            { code: "2961", intitule: "Dépréciations des participations – entités contrôlées" },
+            { code: "2966", intitule: "Dépréciations des participations – entités non contrôlées" },
+            { code: "2967", intitule: "Dépréciations des créances rattachées à des participations" },
+            { code: "297", intitule: "Dépréciation des titres immobilisés, des prêts et avances" },
+
+            // ===== CLASSE 3 : Stocks et en-cours =====
+            { code: "311", intitule: "Matériels militaires (stocks)" },
+            { code: "312", intitule: "Munitions" },
+            { code: "313", intitule: "Fournitures militaires" },
+            { code: "314", intitule: "Vêtements, uniformes et équipements individuels" },
+            { code: "315", intitule: "Alimentation" },
+            { code: "316", intitule: "Pièces de rechanges pour matériels techniques et de transport" },
+            { code: "317", intitule: "Fournitures d'atelier" },
+            { code: "318", intitule: "Autres fournitures" },
+            { code: "321", intitule: "Carburants et autres combustibles" },
+            { code: "322", intitule: "Médicaments, vaccins et autres produits pharmaceutiques" },
+            { code: "323", intitule: "Produits phytosanitaires" },
+            { code: "324", intitule: "Produits d'entretien" },
+            { code: "328", intitule: "Autres approvisionnements" },
+            { code: "3911", intitule: "Dépréciation des matériels militaires" },
+            { code: "3912", intitule: "Dépréciation des munitions" },
+            { code: "3913", intitule: "Dépréciation des fournitures militaires" },
+            { code: "3914", intitule: "Dépréciation des vêtements, uniformes et équipements individuels" },
+            { code: "3915", intitule: "Dépréciation de l'alimentation" },
+            { code: "3916", intitule: "Dépréciation des pièces de rechanges" },
+            { code: "3917", intitule: "Dépréciation des fournitures d'atelier" },
+            { code: "3918", intitule: "Dépréciation des autres fournitures" },
+            { code: "3921", intitule: "Dépréciation des carburants et autres combustibles" },
+            { code: "3922", intitule: "Dépréciation des médicaments, vaccins et autres produits pharmaceutiques" },
+            { code: "3923", intitule: "Dépréciation des produits phytosanitaires" },
+            { code: "3924", intitule: "Dépréciation des produits d'entretien" },
+            { code: "3928", intitule: "Dépréciation des autres approvisionnements" },
+
+            // ===== CLASSE 4 : Comptes de tiers =====
+            { code: "4011", intitule: "Fournisseurs, achats de biens et de prestations de services" },
+            { code: "4021", intitule: "Bons de caisse (règlements bénéficiaires)" },
+            { code: "4031", intitule: "Fournisseurs immobilisations corporelles et incorporelles" },
+            { code: "4032", intitule: "Fournisseurs immobilisations financières" },
+            { code: "407", intitule: "Retenues de garanties et oppositions" },
+            { code: "408", intitule: "Factures non parvenues" },
+            { code: "4091", intitule: "Fournisseurs avances sur factures" },
+            { code: "4101", intitule: "Frais de dossier (recettes minières)" },
+            { code: "4102", intitule: "Droits rémunératoires (recettes minières)" },
+            { code: "4103", intitule: "Redevances superficies annuelles" },
+            { code: "4104", intitule: "Cession de titres miniers" },
+            { code: "4105", intitule: "Redevances sur la production royalties" },
+            { code: "4106", intitule: "Contributions à la promotion de la recherche minière" },
+            { code: "4107", intitule: "Contrôles de l'activité minière" },
+            { code: "4108", intitule: "Autres recettes minières" },
+            { code: "4111", intitule: "Redevances superficiaire (pétrolières)" },
+            { code: "4112", intitule: "Bonus (pétrolières)" },
+            { code: "4113", intitule: "Fonds de solidarité des hydrocarbures" },
+            { code: "4114", intitule: "Licence d'avitaillement" },
+            { code: "4115", intitule: "Recettes au profit de la société de transport public" },
+            { code: "4116", intitule: "Contributions administratives à la formation" },
+            { code: "4117", intitule: "Recettes exceptionnelles (pétrolières)" },
+            { code: "4118", intitule: "Autres recettes pétrolières" },
+            { code: "4121", intitule: "Régime national (recettes des pêches)" },
+            { code: "4122", intitule: "Régime étranger (recettes des pêches)" },
+            { code: "4123", intitule: "Amendes (recettes des pêches)" },
+            { code: "4124", intitule: "Loyers domaine maritime" },
+            { code: "4125", intitule: "Droits de timbres (pêches)" },
+            { code: "4126", intitule: "Redevance mareyeur" },
+            { code: "4127", intitule: "Contribution à la formation de l'académie navale" },
+            { code: "4128", intitule: "Autres recettes (pêches)" },
+            { code: "4131", intitule: "Redevables entités publiques" },
+            { code: "4141", intitule: "Télécommunications (recettes non fiscales)" },
+            { code: "4142", intitule: "Domaines" },
+            { code: "4143", intitule: "Produits des cessions de l'Etat" },
+            { code: "4144", intitule: "Recettes de la justice" },
+            { code: "4145", intitule: "Amendes et pénalités" },
+            { code: "4147", intitule: "Redevables cotisations au régime de retraite" },
+            { code: "4148", intitule: "Autres recettes non fiscales" },
+            { code: "4151", intitule: "Produits financiers (redevables)" },
+            { code: "4153", intitule: "Redevables dividendes" },
+            { code: "4161", intitule: "Dons et legs" },
+            { code: "4171", intitule: "Redevables des produits liquidés par la DGI" },
+            { code: "4172", intitule: "Redevables des produits liquidés par la DGDPE" },
+            { code: "4173", intitule: "Redevables des taxes indirectes (crédit d'impôts)" },
+            { code: "4174", intitule: "Redevables de produits liquidés par la DGD" },
+            { code: "4175", intitule: "Redevables de produits liquidés par la DGD (crédit de droit)" },
+            { code: "4176", intitule: "Redevables de produits liquidés par la DGD (crédit d'enlèvement)" },
+            { code: "4177", intitule: "Redevables de la fiscalité pétrolière" },
+            { code: "4178", intitule: "Redevables des autres produits régaliens" },
+            { code: "418", intitule: "Produits à recevoir" },
+            { code: "419", intitule: "Redevables douteux ou litigieux" },
+            { code: "4211", intitule: "Salaires groupés (règlement personnel)" },
+            { code: "4212", intitule: "Bons de caisse (personnel)" },
+            { code: "4214", intitule: "Postes comptables secondaires" },
+            { code: "4221", intitule: "Rémunérations dues aux titulaires" },
+            { code: "4222", intitule: "Rémunérations dues aux contractuels" },
+            { code: "423", intitule: "Avances et acomptes sur rémunérations" },
+            { code: "424", intitule: "Retenues et oppositions" },
+            { code: "4251", intitule: "CNSS (cotisations)" },
+            { code: "4252", intitule: "Caisse nationale de retraite" },
+            { code: "4253", intitule: "CNAM" },
+            { code: "4281", intitule: "Rémunérations (charges à payer)" },
+            { code: "4285", intitule: "Cotisations aux organismes sociaux" },
+            { code: "4311", intitule: "Wilayas – Régions (correspondants)" },
+            { code: "4312", intitule: "Moughataa - Départements" },
+            { code: "4313", intitule: "Communes" },
+            { code: "43211", intitule: "Comptes de certifications – Garde Nationale" },
+            { code: "43212", intitule: "Comptes de certifications – Armée Nationale" },
+            { code: "43213", intitule: "Comptes de certifications – Gendarmerie Nationale" },
+            { code: "43214", intitule: "Comptes de certifications – Police Nationale" },
+            { code: "43215", intitule: "Comptes de certifications – Protection civile" },
+            { code: "4331", intitule: "Compte de certification pour déposants" },
+            { code: "434", intitule: "Caisse des dépôts et des consignations" },
+            { code: "43511", intitule: "Bons de caisse (règlement pensions)" },
+            { code: "4353", intitule: "Caisse Nationale de Retraite" },
+            { code: "4354", intitule: "Caisse de retraités singularisés" },
+            { code: "436", intitule: "Certification des chèques" },
+            { code: "437", intitule: "Régies et assimilées" },
+            { code: "438", intitule: "Autres correspondants du Trésor" },
+            { code: "4411", intitule: "Compte d'opérations réciproques avec le Trésor Français" },
+            { code: "4412", intitule: "Compte d'opérations réciproques avec le Trésor Sénégalais" },
+            { code: "451", intitule: "Déposants personnes physiques" },
+            { code: "4521", intitule: "ASC Police (déposants personnes morales)" },
+            { code: "4522", intitule: "Caisse de la police" },
+            { code: "46111", intitule: "Déficits des comptables (arrêté de débet)" },
+            { code: "46112", intitule: "Déficits des régisseurs" },
+            { code: "46121", intitule: "Débets des comptables" },
+            { code: "46122", intitule: "Débets des régisseurs" },
+            { code: "4614", intitule: "Sommes indûment perçues à recouvrer" },
+            { code: "4615", intitule: "Créances sur cessions d'immobilisations" },
+            { code: "4616", intitule: "Créances sur cessions de valeurs mobilières" },
+            { code: "4618", intitule: "Autres débiteurs à régulariser" },
+            { code: "46211", intitule: "Recouvrement pour compte de tiers – collectivités territoriales" },
+            { code: "46212", intitule: "Recouvrement pour compte de tiers – établissements publics" },
+            { code: "46213", intitule: "Recouvrement pour compte de tiers – organismes internationaux" },
+            { code: "46218", intitule: "Recouvrement pour compte de tiers – autres tiers" },
+            { code: "462211", intitule: "Impôts hors crédits TVA à rembourser (excédent de versement)" },
+            { code: "462212", intitule: "Crédits TVA à rembourser" },
+            { code: "46222", intitule: "Droits de Douanes" },
+            { code: "46223", intitule: "Recettes Domainales, enregistrement et timbres" },
+            { code: "46224", intitule: "Recettes de Pêches" },
+            { code: "46225", intitule: "Autres recettes non fiscales recouvrées par la DGTCP" },
+            { code: "46228", intitule: "Autres recettes budgétaires" },
+            { code: "4623", intitule: "Prime intéressement DGI" },
+            { code: "4624", intitule: "Consignations de salaires" },
+            { code: "4625", intitule: "Régularisation de règlements rejetés" },
+            { code: "4626", intitule: "Ordre de paiement" },
+            { code: "46281", intitule: "Opérations à clarifier avec la BCM" },
+            { code: "46282", intitule: "Consignation du service de la dépense" },
+            { code: "46288", intitule: "Autres créditeurs divers" },
+            { code: "463111", intitule: "Action contre la fraude (Trésor)" },
+            { code: "463112", intitule: "Fonds d'équipement (Trésor)" },
+            { code: "463113", intitule: "Fonds communs (Trésor)" },
+            { code: "463121", intitule: "Action contre la fraude (DGI)" },
+            { code: "463122", intitule: "Fonds d'équipement (DGI)" },
+            { code: "463123", intitule: "Fonds communs (DGI)" },
+            { code: "463131", intitule: "Action contre la fraude (Douanes)" },
+            { code: "463132", intitule: "Fonds d'équipement (Douanes)" },
+            { code: "463133", intitule: "Fonds communs (Douanes)" },
+            { code: "463141", intitule: "Action contre la fraude (Domaines)" },
+            { code: "463142", intitule: "Fonds d'équipement (Domaines)" },
+            { code: "463143", intitule: "Fonds communs (Domaines)" },
+            { code: "463151", intitule: "Parts des chefs DCE (Contrôle économique)" },
+            { code: "463152", intitule: "Action contre la fraude (Contrôle économique)" },
+            { code: "463153", intitule: "Ayants droits DCE" },
+            { code: "463154", intitule: "Fonds communs DCE" },
+            { code: "463155", intitule: "Fonds équipement (Contrôle économique)" },
+            { code: "46316", intitule: "Protection de la nature" },
+            { code: "463171", intitule: "Ministère des pêches (fonds)" },
+            { code: "463175", intitule: "Action contre la fraude (Pêches)" },
+            { code: "463181", intitule: "Fonds commun du Ministère des Finances – Equipement" },
+            { code: "463182", intitule: "Fonds commun du Ministère des Finances – Personnel" },
+            { code: "46321", intitule: "Frais poursuites – impôts et taxes" },
+            { code: "46322", intitule: "Frais poursuites – droits d'enregistrement" },
+            { code: "46328", intitule: "Autres frais de poursuites" },
+            { code: "4633", intitule: "Honoraires CNR" },
+            { code: "4634", intitule: "Remise de timbres fiscaux" },
+            { code: "46351", intitule: "Part amendes forfaitaires – Direction Générale des Transports" },
+            { code: "46352", intitule: "Part amendes forfaitaires – Gendarmerie Nationale" },
+            { code: "46353", intitule: "Part amendes forfaitaires – Direction Générale de la Sûreté" },
+            { code: "46354", intitule: "Part amendes forfaitaires – Groupement Général de la Sécurité des Routes" },
+            { code: "4636", intitule: "Comptes particuliers des payeurs généraux du Trésor" },
+            { code: "46371", intitule: "Fonds commun (FAHP)" },
+            { code: "46372", intitule: "Fonds d'équipement (FAHP)" },
+            { code: "46373", intitule: "DHP" },
+            { code: "46381", intitule: "CUN (fonds à répartir)" },
+            { code: "46382", intitule: "AROTR" },
+            { code: "46383", intitule: "CCIAM" },
+            { code: "4641", intitule: "Patente intercommunale sur les transports" },
+            { code: "4642", intitule: "Impôts fonciers" },
+            { code: "4648", intitule: "Autres recettes à répartir" },
+            { code: "465", intitule: "Mise en jeu de la garantie de l'Etat" },
+            { code: "466111", intitule: "Bons du Trésor conventionnels (dettes à échoir)" },
+            { code: "466112", intitule: "Bons du Trésor islamiques (dettes à échoir)" },
+            { code: "46612", intitule: "Emprunts obligataires (dettes à échoir)" },
+            { code: "46613", intitule: "Emprunt BCM-FSD Convention MF (dettes à échoir)" },
+            { code: "46614", intitule: "BCM/MF Convention 2018 (dettes à échoir)" },
+            { code: "466211", intitule: "Club de Paris (dettes à échoir)" },
+            { code: "466212", intitule: "Extérieur au Club de Paris (dettes à échoir)" },
+            { code: "466221", intitule: "Banques internationales (dettes à échoir)" },
+            { code: "466222", intitule: "Organismes et institutions (dettes à échoir)" },
+            { code: "46623", intitule: "Organismes extérieurs privés (dettes à échoir)" },
+            { code: "46628", intitule: "Autres organismes (dettes à échoir)" },
+            { code: "4663", intitule: "Dettes assorties de conditions particulières (à échoir)" },
+            { code: "4664", intitule: "Autres dettes assimilées (à échoir)" },
+            { code: "46648", intitule: "Intérêts courus (dettes à échoir)" },
+            { code: "46681", intitule: "Dette passive (Koweït – Libye) à échoir" },
+            { code: "46688", intitule: "Conventions à paiement différées (à échoir)" },
+            { code: "4671", intitule: "Dons et legs en numéraire ou valeurs" },
+            { code: "4672", intitule: "Fonds de concours" },
+            { code: "4673", intitule: "Financement extérieur à mobiliser" },
+            { code: "4674", intitule: "Financement intérieur à mobiliser" },
+            { code: "4675", intitule: "Budget annexe" },
+            { code: "4676", intitule: "Comptes spéciaux du Trésor" },
+            { code: "4677", intitule: "Projets, programmes à financement extérieur" },
+            { code: "4678", intitule: "Autres débiteurs et créditeurs divers" },
+            { code: "468", intitule: "Charges à payer et produits à recevoir" },
+            { code: "47111", intitule: "Achats de biens et services (fonctionnement)" },
+            { code: "47112", intitule: "Personnel (fonctionnement)" },
+            { code: "4712", intitule: "Investissement" },
+            { code: "4713", intitule: "Avances, prêts et participations" },
+            { code: "4714", intitule: "Dépenses au titre du remboursement de la dette" },
+            { code: "4715", intitule: "Subventions, dons et transferts" },
+            { code: "4716", intitule: "Perte de change" },
+            { code: "4717", intitule: "Frais de justice" },
+            { code: "47181", intitule: "Découvert des déposants (comptes de dépôts)" },
+            { code: "47182", intitule: "Découvert des régisseurs" },
+            { code: "47188", intitule: "Autres découverts" },
+            { code: "47211", intitule: "Rejets de dépenses (intérieur)" },
+            { code: "47212", intitule: "Rejets de dépenses (postes diplomatiques)" },
+            { code: "4722", intitule: "Dépenses sur relevé BCM à clarifier" },
+            { code: "4731", intitule: "Crédits délégués" },
+            { code: "4741", intitule: "Receveurs des impôts" },
+            { code: "4742", intitule: "Receveurs des douanes" },
+            { code: "4743", intitule: "Receveurs des domaines" },
+            { code: "4744", intitule: "Receveurs de l'enregistrement" },
+            { code: "47511", intitule: "Recettes à imputer – comptables centralisateurs" },
+            { code: "47512", intitule: "Recettes à imputer – comptables non centralisateurs" },
+            { code: "47513", intitule: "Recettes à imputer – receveurs des impôts" },
+            { code: "47514", intitule: "Recettes à imputer – receveurs des douanes" },
+            { code: "47515", intitule: "Recettes à imputer – receveurs des domaines" },
+            { code: "47516", intitule: "Recettes à imputer – receveurs de l'enregistrement" },
+            { code: "4752", intitule: "Recettes à transférer à un autre comptable" },
+            { code: "4753", intitule: "Recettes des fonds de concours" },
+            { code: "47541", intitule: "Bons du Trésor (recettes perçues avant émission)" },
+            { code: "47542", intitule: "Emprunts obligataires (recettes perçues avant émission)" },
+            { code: "47543", intitule: "Emprunt BCM-FSD Convention MF (recettes perçues avant émission)" },
+            { code: "4755", intitule: "Recettes relevés BCM à clarifier" },
+            { code: "4756", intitule: "Traites signées par le TG non encore présentées aux receveurs des douanes" },
+            { code: "4758", intitule: "Autres recettes à classer ou à régulariser" },
+            { code: "4761", intitule: "Diminution des créances (différence de conversion actif)" },
+            { code: "4762", intitule: "Augmentation des dettes (différence de conversion actif)" },
+            { code: "4768", intitule: "Différences compensées par couverture de change (actif)" },
+            { code: "4771", intitule: "Augmentation des créances (différence de conversion passif)" },
+            { code: "4772", intitule: "Diminution des dettes (différence de conversion passif)" },
+            { code: "4778", intitule: "Différences compensées par couverture de change (passif)" },
+            { code: "478", intitule: "Autres comptes transitoires" },
+            { code: "481", intitule: "Charges à répartir sur plusieurs exercices" },
+            { code: "486", intitule: "Charges constatées d'avance" },
+            { code: "487", intitule: "Produits constatées d'avance" },
+            { code: "491", intitule: "Dépréciations des comptes de clients" },
+            { code: "496", intitule: "Dépréciations des comptes de débiteurs divers" },
+
+            // ===== CLASSE 5 : Comptes financiers =====
+            { code: "551", intitule: "Compte courant du Trésor" },
+            { code: "51111", intitule: "TPE – Recettes (Trésorier Général)" },
+            { code: "51113", intitule: "TPE – DFT" },
+            { code: "51114", intitule: "TPE – CDC" },
+            { code: "51141", intitule: "TPE – DGI" },
+            { code: "51142", intitule: "TPE – DGD" },
+            { code: "51143", intitule: "TPE – DGDPE" },
+            { code: "51151", intitule: "TPE - Banque primaire – comptes des comptables centralisateurs" },
+            { code: "51152", intitule: "TPE - Banque primaire – comptes des comptables non centralisateurs" },
+            { code: "51161", intitule: "TPE - CCP – comptables centralisateurs" },
+            { code: "51162", intitule: "TPE - CCP – comptables non centralisateurs" },
+            { code: "512111", intitule: "Chèques (Trésorerie Générale – dépenses)" },
+            { code: "512112", intitule: "Virement (Trésorerie Générale – dépenses)" },
+            { code: "512121", intitule: "Chèques (DFT)" },
+            { code: "512122", intitule: "Virement (DFT)" },
+            { code: "512131", intitule: "Chèques (CDC)" },
+            { code: "512132", intitule: "Virement (CDC)" },
+            { code: "512141", intitule: "Chèques (financement extérieur)" },
+            { code: "512142", intitule: "Virement (financement extérieur)" },
+            { code: "512211", intitule: "Chèques (PGT)" },
+            { code: "512212", intitule: "Virement (PGT)" },
+            { code: "512221", intitule: "Chèques (PDDE)" },
+            { code: "512222", intitule: "Virement (PDDE)" },
+            { code: "512231", intitule: "Chèques (PPCDC)" },
+            { code: "512232", intitule: "Virement (PPCDC)" },
+            { code: "513", intitule: "Moyens de paiement CCP ordinaire" },
+            { code: "525", intitule: "Autres valeurs mobilières" },
+            { code: "526", intitule: "Autres créances assimilées" },
+            { code: "531", intitule: "Obligations cautionnées des douanes" },
+            { code: "532", intitule: "Chèques à encaisser" },
+            { code: "533", intitule: "Autres effets à encaisser" },
+            { code: "5341", intitule: "Traites (valeurs envoyées à la compensation)" },
+            { code: "5342", intitule: "Chèques (valeurs envoyées à la compensation)" },
+            { code: "5351", intitule: "Traites (rejets de valeurs)" },
+            { code: "5352", intitule: "Chèques (rejets de valeurs)" },
+            { code: "5353", intitule: "Effets à encaisser (rejets)" },
+            { code: "5361", intitule: "Obligations cautionnées (comptables non centralisateurs)" },
+            { code: "5362", intitule: "Chèques (comptables non centralisateurs)" },
+            { code: "5363", intitule: "Autres valeurs (comptables non centralisateurs)" },
+            { code: "55111", intitule: "CC – Trésorier Général (recettes)" },
+            { code: "55112", intitule: "CC – Trésorier Général (dépenses)" },
+            { code: "55113", intitule: "CC – DFT" },
+            { code: "55114", intitule: "CC – CDC" },
+            { code: "55118", intitule: "CC – financement extérieur" },
+            { code: "55121", intitule: "CC - PGT" },
+            { code: "55122", intitule: "CC - PPDC" },
+            { code: "55123", intitule: "CC - PPDE" },
+            { code: "55135", intitule: "CC - dettes – bons islamiques" },
+            { code: "55136", intitule: "CC - dettes – bons conventionnels" },
+            { code: "55137", intitule: "CC - dettes – dette extérieure" },
+            { code: "55138", intitule: "CC - dettes – emprunts obligataires" },
+            { code: "55141", intitule: "CC – DGI" },
+            { code: "55142", intitule: "CC – DGD" },
+            { code: "55143", intitule: "CC – DGDPE" },
+            { code: "5516", intitule: "Dette de la BCM" },
+            { code: "5517", intitule: "FMI" },
+            { code: "5521", intitule: "Banque primaire – comptables centralisateurs" },
+            { code: "5522", intitule: "Banque primaire – comptables non centralisateurs" },
+            { code: "5541", intitule: "CCP – comptables centralisateurs" },
+            { code: "5542", intitule: "CCP – comptables non centralisateurs" },
+            { code: "555", intitule: "FNRH" },
+            { code: "5611", intitule: "Numéraire (caisse centrale)" },
+            { code: "5612", intitule: "Timbres fiscaux (caisse centrale)" },
+            { code: "5621", intitule: "Caisse des PNC – comptables centralisateurs" },
+            { code: "5622", intitule: "Caisse des PNC – comptables non centralisateurs" },
+            { code: "5631", intitule: "Douanes (caisse des administrations financières)" },
+            { code: "5632", intitule: "Impôts (caisse des administrations financières)" },
+            { code: "5811", intitule: "TG (approvisionnement et dégagement)" },
+            { code: "5812", intitule: "FNRH (approvisionnement et dégagement)" },
+            { code: "5813", intitule: "Postes comptables (approvisionnement et dégagement)" },
+            { code: "582", intitule: "Approvisionnement et dégagement des comptables non centralisateurs" },
+            { code: "583", intitule: "Approvisionnement et dégagement de la caisse" },
+            { code: "595", intitule: "Dépréciations des comptes financiers" },
+
+            // ===== CLASSE 6 : Comptes de charges =====
+            { code: "6011", intitule: "Achats stockés – matériels militaires" },
+            { code: "6012", intitule: "Achat matériel non militaire" },
+            { code: "6013", intitule: "Achats stockés – munitions" },
+            { code: "6014", intitule: "Achats stockés – fournitures militaires" },
+            { code: "6015", intitule: "Achats stockés – habillement" },
+            { code: "6016", intitule: "Achats stockés – alimentation" },
+            { code: "60171", intitule: "Pièces de rechanges pour matériels" },
+            { code: "60172", intitule: "Pièces de rechanges pour matériels de transport" },
+            { code: "6018", intitule: "Fournitures d'atelier" },
+            { code: "6019", intitule: "Autres fournitures" },
+            { code: "6021", intitule: "Stock stratégique de produits énergétiques" },
+            { code: "6022", intitule: "Médicaments, vaccins et autres produits pharmaceutiques" },
+            { code: "60231", intitule: "Stock stratégique de produits agricoles" },
+            { code: "60232", intitule: "Stock stratégique de produits phytosanitaires" },
+            { code: "6025", intitule: "Stock stratégique denrées alimentaires" },
+            { code: "6028", intitule: "Stock stratégique autres produits" },
+            { code: "60311", intitule: "Variation des stocks de matériels militaires" },
+            { code: "60312", intitule: "Variation des stocks de munitions" },
+            { code: "60313", intitule: "Variation des stocks de fournitures militaires" },
+            { code: "60314", intitule: "Variation des stocks de vêtements, uniformes" },
+            { code: "60315", intitule: "Variation des stocks d'alimentation" },
+            { code: "60316", intitule: "Variation des stocks de pièces de rechanges" },
+            { code: "60317", intitule: "Variation des stocks de fournitures d'atelier" },
+            { code: "60318", intitule: "Variation des stocks d'autres fournitures" },
+            { code: "60321", intitule: "Variation des stocks de carburants" },
+            { code: "60322", intitule: "Variation des stocks de médicaments" },
+            { code: "60323", intitule: "Variation des stocks de produits phytosanitaires" },
+            { code: "60328", intitule: "Variation des autres approvisionnements" },
+            { code: "6051", intitule: "Eau (fournitures non stockables)" },
+            { code: "6052", intitule: "Electricité (fournitures non stockables)" },
+            { code: "6058", intitule: "Autres fluides et énergies" },
+            { code: "6061", intitule: "Fournitures scolaires" },
+            { code: "6062", intitule: "Produits pharmaceutiques" },
+            { code: "60631", intitule: "Petits matériels vétérinaires" },
+            { code: "60632", intitule: "Produits vétérinaires" },
+            { code: "60641", intitule: "Petits matériel de bureau" },
+            { code: "60642", intitule: "Petits matériel informatique" },
+            { code: "60643", intitule: "Fournitures de bureau" },
+            { code: "60648", intitule: "Autres consommables de bureau" },
+            { code: "6065", intitule: "Petits outillages et matériels de transport" },
+            { code: "60661", intitule: "Produits de nettoyage" },
+            { code: "60662", intitule: "Matériels de nettoyage" },
+            { code: "6068", intitule: "Autres achats de produits spécifiques" },
+            { code: "607", intitule: "Achat de biens destinés à être vendus" },
+            { code: "608", intitule: "Autres achats de biens et fournitures" },
+            { code: "6111", intitule: "Frais de transport autres qu'aérien extérieur" },
+            { code: "6112", intitule: "Frais de transport aérien extérieur" },
+            { code: "6113", intitule: "Frais de transport autres qu'aérien intérieur" },
+            { code: "6114", intitule: "Frais de transport aérien intérieur" },
+            { code: "6115", intitule: "Frais de mission extérieur" },
+            { code: "6116", intitule: "Frais de mission intérieur" },
+            { code: "6117", intitule: "Frais d'hôtel" },
+            { code: "61181", intitule: "Autres frais de mission à l'intérieur" },
+            { code: "61182", intitule: "Autres frais de mission à l'extérieur" },
+            { code: "6121", intitule: "Locations immobilières" },
+            { code: "6122", intitule: "Location de biens mobiliers hors moyens de transports" },
+            { code: "613", intitule: "Maintenance ouvrages en contrats PPP" },
+            { code: "61411", intitule: "Entretiens et réparation de matériel et mobilier de bureau" },
+            { code: "61412", intitule: "Entretiens et réparation de biens mobiliers" },
+            { code: "6142", intitule: "Entretiens et réparation de matériel technique" },
+            { code: "6143", intitule: "Entretiens et réparation de matériel de transport" },
+            { code: "6144", intitule: "Maintenance, entretiens et réparation de matériel informatique" },
+            { code: "61451", intitule: "Entretiens et réparation bâtiment administratif" },
+            { code: "61452", intitule: "Entretiens et réparation bâtiment technique" },
+            { code: "61453", intitule: "Entretiens et réparation logement" },
+            { code: "61461", intitule: "Entretien des terrains" },
+            { code: "61462", intitule: "Entretien espaces verts, jardins, parcs" },
+            { code: "6147", intitule: "Entretien des routes, ouvrages et installations complexes spécialisées" },
+            { code: "615", intitule: "Primes d'assurances" },
+            { code: "616", intitule: "Études, recherche et documentation" },
+            { code: "617", intitule: "Relations publiques" },
+            { code: "6181", intitule: "Frais postaux" },
+            { code: "6182", intitule: "Abonnement Internet" },
+            { code: "6183", intitule: "Abonnements téléphoniques" },
+            { code: "6184", intitule: "Autres abonnements" },
+            { code: "6185", intitule: "Impression" },
+            { code: "6186", intitule: "Publicité et promotion" },
+            { code: "6187", intitule: "Courrier diplomatique" },
+            { code: "6188", intitule: "Autres frais de télécommunications" },
+            { code: "6221", intitule: "Frais de suivi et de contrôle" },
+            { code: "6222", intitule: "Prestations de services dans le cadre des contrats PPP" },
+            { code: "6231", intitule: "Frais de formation" },
+            { code: "6232", intitule: "Frais de stage" },
+            { code: "624", intitule: "Redevances pour brevets, licences et logiciels" },
+            { code: "6251", intitule: "Frais d'hôtes officiels" },
+            { code: "6253", intitule: "Frais de réception, de fêtes et cérémonies" },
+            { code: "6256", intitule: "Hôtel des autorités" },
+            { code: "627", intitule: "Rémunération d'intermédiaires et honoraires" },
+            { code: "628", intitule: "Autres prestations de service" },
+            { code: "63111", intitule: "Subventions de fonctionnement aux EPA" },
+            { code: "63112", intitule: "Subventions d'investissement aux EPA" },
+            { code: "63121", intitule: "Subventions de fonctionnement aux Autorités Indépendantes" },
+            { code: "63122", intitule: "Subventions de fonctionnement aux Agences" },
+            { code: "63123", intitule: "Subventions d'investissement aux Autorités Indépendantes" },
+            { code: "63124", intitule: "Subventions d'investissement aux Agences" },
+            { code: "63131", intitule: "Subventions de fonctionnement (autres organismes service public)" },
+            { code: "63132", intitule: "Subventions d'investissement (autres organismes service public)" },
+            { code: "63141", intitule: "Subventions d'équilibre des établissements publics" },
+            { code: "63142", intitule: "Subventions d'équilibre aux Autorités Indépendantes" },
+            { code: "63143", intitule: "Subventions d'équilibre aux Agences" },
+            { code: "63144", intitule: "Subventions d'équilibre aux autres organismes" },
+            { code: "6318", intitule: "Autres subventions" },
+            { code: "641111", intitule: "Bourses (transferts directs aux ménages)" },
+            { code: "641112", intitule: "Cantines scolaires" },
+            { code: "641113", intitule: "Soutien aux détenus et indigents" },
+            { code: "641114", intitule: "Frais hôtel des anciens chefs d'Etat" },
+            { code: "641118", intitule: "Autres transferts directs courants aux ménages" },
+            { code: "64112", intitule: "Transferts directs en capital aux ménages" },
+            { code: "641211", intitule: "Transferts directs courants – entreprises secteur industriel" },
+            { code: "641212", intitule: "Transferts directs courants – entreprises secteur pêche" },
+            { code: "641213", intitule: "Transferts directs courants – entreprises secteur agricole" },
+            { code: "641214", intitule: "Transferts directs courants – entreprises artisanales" },
+            { code: "641218", intitule: "Transferts directs courants – autres secteurs économiques" },
+            { code: "641221", intitule: "Transferts directs en capital – entreprises secteur industriel" },
+            { code: "641222", intitule: "Transferts directs en capital – entreprises secteur pêche" },
+            { code: "641223", intitule: "Transferts directs en capital – entreprises secteur agricole" },
+            { code: "641224", intitule: "Transferts directs en capital – entreprises artisanales" },
+            { code: "641228", intitule: "Transferts directs en capital – autres secteurs" },
+            { code: "641311", intitule: "Transferts directs courants – entreprises publiques industrielles" },
+            { code: "641312", intitule: "Transferts directs courants – entreprises publiques pêche" },
+            { code: "641313", intitule: "Transferts directs courants – entreprise publique mines/pétrole" },
+            { code: "641314", intitule: "Transferts directs courants – entreprises publiques autres" },
+            { code: "641321", intitule: "Transferts directs en capital – entreprises publiques industrielles" },
+            { code: "641322", intitule: "Transferts directs en capital – entreprises publiques pêche" },
+            { code: "641323", intitule: "Transferts directs en capital – entreprise publique mines/pétrole" },
+            { code: "641324", intitule: "Transferts directs en capital – entreprises publiques autres" },
+            { code: "64141", intitule: "Transferts directs courants aux institutions financières" },
+            { code: "64142", intitule: "Transferts directs en capital aux institutions financières" },
+            { code: "64151", intitule: "Contributions aux organismes internationaux" },
+            { code: "641521", intitule: "Transferts directs courants aux mosquées à l'extérieur" },
+            { code: "641522", intitule: "Transferts directs en capital aux mosquées à l'extérieur" },
+            { code: "641531", intitule: "Autres transferts directs courants à l'extérieur" },
+            { code: "641532", intitule: "Autres transferts directs en capital à l'extérieur" },
+            { code: "641611", intitule: "Transferts directs courants aux communes (FRD fonctionnement)" },
+            { code: "641612", intitule: "Transferts directs en capital aux communes (FRD équipement)" },
+            { code: "641613", intitule: "Autres transferts directs courants aux communes" },
+            { code: "641621", intitule: "Transferts directs courants aux régions" },
+            { code: "641622", intitule: "Transferts directs en capital aux régions" },
+            { code: "64171", intitule: "Autres transferts directs courants" },
+            { code: "64172", intitule: "Autres transferts directs en capital" },
+            { code: "642111", intitule: "Secours pour hospitalisation des indigents" },
+            { code: "642112", intitule: "Détenus" },
+            { code: "642113", intitule: "Pèlerinage" },
+            { code: "642114", intitule: "Préparation de LFTAR" },
+            { code: "642118", intitule: "Autres transferts indirects courants aux ménages" },
+            { code: "64212", intitule: "Transferts indirects en capital aux ménages" },
+            { code: "642211", intitule: "Transferts indirects courants – entreprises industrie" },
+            { code: "642212", intitule: "Transferts indirects courants – entreprises pêche" },
+            { code: "642213", intitule: "Transferts indirects courants – entreprises agricole" },
+            { code: "642214", intitule: "Transferts indirects courants – entreprises artisanales" },
+            { code: "642218", intitule: "Transferts indirects courants – autres secteurs" },
+            { code: "642221", intitule: "Transferts indirects en capital – entreprises industrie" },
+            { code: "642222", intitule: "Transferts indirects en capital – entreprises pêche" },
+            { code: "642223", intitule: "Transferts indirects en capital – entreprises agricole" },
+            { code: "642224", intitule: "Transferts indirects en capital – entreprises artisanales" },
+            { code: "642228", intitule: "Transferts indirects en capital – autres secteurs" },
+            { code: "642311", intitule: "Transferts indirects courants – entreprises publiques industrielles" },
+            { code: "642312", intitule: "Transferts indirects courants – entreprises publiques pêche" },
+            { code: "642313", intitule: "Transferts indirects courants – entreprise publique mines/pétrole" },
+            { code: "642314", intitule: "Transferts indirects courants – entreprises publiques autres" },
+            { code: "642321", intitule: "Transferts indirects en capital – entreprises publiques industrielles" },
+            { code: "642322", intitule: "Transferts indirects en capital – entreprises publiques pêche" },
+            { code: "642323", intitule: "Transferts indirects en capital – entreprise publique mines/pétrole" },
+            { code: "642324", intitule: "Transferts indirects en capital – entreprises publiques autres" },
+            { code: "64241", intitule: "Transferts indirects courants aux institutions financières" },
+            { code: "64242", intitule: "Transferts indirects en capital aux institutions financières" },
+            { code: "642521", intitule: "Transferts indirects courants aux mosquées à l'extérieur" },
+            { code: "642522", intitule: "Transferts indirects en capital aux mosquées à l'extérieur" },
+            { code: "642531", intitule: "Autres transferts indirects courants à l'extérieur" },
+            { code: "642532", intitule: "Autres transferts indirects en capital à l'extérieur" },
+            { code: "642611", intitule: "Transferts indirects courants aux communes" },
+            { code: "642612", intitule: "Transferts indirects en capital aux communes" },
+            { code: "642621", intitule: "Transferts indirects courants aux régions" },
+            { code: "642622", intitule: "Transferts indirects en capital aux régions" },
+            { code: "64271", intitule: "Autres transferts indirects courants" },
+            { code: "64272", intitule: "Autres transferts indirects en capital" },
+            { code: "6511", intitule: "Traitements et salaires – titulaires" },
+            { code: "6512", intitule: "Traitements et salaires – contractuels" },
+            { code: "65301", intitule: "Prime de fonction" },
+            { code: "65302", intitule: "Prime de responsabilité" },
+            { code: "65303", intitule: "Prime de sujétion" },
+            { code: "65304", intitule: "Prime d'incitation" },
+            { code: "65305", intitule: "Prime de spécialisation complémentaire" },
+            { code: "65306", intitule: "Prime de rendement" },
+            { code: "65307", intitule: "Heures supplémentaires" },
+            { code: "65308", intitule: "Autres honoraires" },
+            { code: "65309", intitule: "Travaux spéciaux" },
+            { code: "65310", intitule: "Gratifications" },
+            { code: "65311", intitule: "Indemnité de non logement" },
+            { code: "65312", intitule: "Indemnités de résidence" },
+            { code: "65313", intitule: "Autres indemnités" },
+            { code: "65314", intitule: "Primes et indemnités agents contractuels" },
+            { code: "6541", intitule: "Cotisations de l'employeur à la CNSS" },
+            { code: "6542", intitule: "Cotisations de l'employeur à la caisse de retraite" },
+            { code: "6543", intitule: "Cotisation complémentaire de l'Etat à la Caisse de retraite" },
+            { code: "6544", intitule: "Pensions versées aux fonctionnaires par la caisse de retraite" },
+            { code: "6545", intitule: "Cotisations de l'employeur à la CNAM" },
+            { code: "6546", intitule: "Cotisations de l'employeur à la CNSS" },
+            { code: "6561", intitule: "Allocations familiales" },
+            { code: "6562", intitule: "Allocations scolaires missions diplomatiques" },
+            { code: "6548", intitule: "Autres prestations sociales" },
+            { code: "658", intitule: "Autres rémunérations" },
+            { code: "6611", intitule: "Annulations ou diminution de produits constatés antérieurement" },
+            { code: "6612", intitule: "Admission en non-valeur de créances de l'Etat" },
+            { code: "6613", intitule: "Remise gracieuse du déficit ou du débet d'un comptable" },
+            { code: "6614", intitule: "Dépenses fiscales (marchés publics financement extérieur)" },
+            { code: "662", intitule: "Condamnation de l'Etat" },
+            { code: "663", intitule: "Frais de justice" },
+            { code: "664", intitule: "Reversement sur trop perçu et remboursement divers" },
+            { code: "6651", intitule: "Valeur comptable des immobilisations incorporelles cédées" },
+            { code: "6652", intitule: "Valeur comptable des immobilisations corporelles cédées" },
+            { code: "6655", intitule: "Valeur comptable des immobilisations financières cédées" },
+            { code: "666", intitule: "Remboursement de frais de campagne aux candidats" },
+            { code: "6671", intitule: "Perte sur créances irrécouvrables" },
+            { code: "6672", intitule: "Pertes sur prêts, avances et créances rattachées" },
+            { code: "6673", intitule: "Charges résultant de la mise en jeu de garantie" },
+            { code: "6681", intitule: "Différence de réalisation positive" },
+            { code: "6682", intitule: "Versements entre les entités de l'Etat" },
+            { code: "6688", intitule: "Autres charges de gestion courante" },
+            { code: "67111", intitule: "Charges financières – Club de Paris (dette extérieure bilatérale)" },
+            { code: "67112", intitule: "Charges financières – hors Club de Paris" },
+            { code: "67121", intitule: "Charges financières – Banques internationales (multilatérale)" },
+            { code: "67122", intitule: "Charges financières – Organismes et institutions" },
+            { code: "67131", intitule: "Charges financières – Organismes privés" },
+            { code: "67132", intitule: "Charges financières – Marchés internationaux" },
+            { code: "6718", intitule: "Charges financières sur autres dettes extérieures" },
+            { code: "6721", intitule: "Charges financières – BT classique" },
+            { code: "6722", intitule: "Charges financières – BT islamique" },
+            { code: "6723", intitule: "Charges financières – Emprunts obligataires" },
+            { code: "6728", intitule: "Charges financières sur autres dettes intérieures" },
+            { code: "673", intitule: "Charges financières des dettes assorties de conditions particulières" },
+            { code: "6761", intitule: "Pertes de change – transferts avec les missions diplomatiques" },
+            { code: "6762", intitule: "Pertes de change – transferts en devises étrangères" },
+            { code: "678", intitule: "Autres charges financières" },
+            { code: "6811", intitule: "Dotations aux amortissements des immobilisations incorporelles et corporelles" },
+            { code: "6812", intitule: "Dotations pour dépréciations des immobilisations" },
+            { code: "6813", intitule: "Dotations aux provisions pour risques et charges d'exploitation" },
+            { code: "68171", intitule: "Dotations pour dépréciations des stocks" },
+            { code: "68172", intitule: "Dotations pour dépréciations des créances" },
+            { code: "6861", intitule: "Dotations aux dépréciations des participations" },
+            { code: "6862", intitule: "Dotations aux dépréciations des créances rattachées" },
+            { code: "6863", intitule: "Dotations aux provisions pour risques et charges financières" },
+            { code: "6865", intitule: "Dotations aux provisions financières" },
+
+            // ===== CLASSE 7 : Comptes de Produits =====
+            { code: "70111", intitule: "Frais de dossier (autorisation de prospection)" },
+            { code: "70121", intitule: "Frais de dossier (permis de recherche)" },
+            { code: "70122", intitule: "Droit rémunératoire (permis de recherche)" },
+            { code: "70123", intitule: "Taxe superficiaire (permis de recherche)" },
+            { code: "70131", intitule: "Frais de dossier (permis de petite exploitation)" },
+            { code: "70132", intitule: "Droit rémunératoire (permis de petite exploitation)" },
+            { code: "70133", intitule: "Taxe superficiaire (permis de petite exploitation)" },
+            { code: "70134", intitule: "Redevance d'exploitation (Royalties)" },
+            { code: "70141", intitule: "Frais de dossier (permis d'exploitation minière)" },
+            { code: "70142", intitule: "Droit rémunératoire (permis d'exploitation minière)" },
+            { code: "70143", intitule: "Taxe superficiaire (permis d'exploitation minière)" },
+            { code: "70144", intitule: "Redevance d'exploitation (Royalties)" },
+            { code: "70211", intitule: "Frais de dossier (autorisation de carrière industrielle)" },
+            { code: "70212", intitule: "Droit rémunératoire (carrière)" },
+            { code: "70213", intitule: "Taxe superficiaire (carrière)" },
+            { code: "70311", intitule: "Frais de dossier (autorisation DNF)" },
+            { code: "70312", intitule: "Droit rémunératoire (DNF)" },
+            { code: "70411", intitule: "Cession des titres" },
+            { code: "70421", intitule: "Droit renouvellement de titres" },
+            { code: "70431", intitule: "Droit de mutation de titres" },
+            { code: "70441", intitule: "Droit réduction de superficie" },
+            { code: "70511", intitule: "Contributions à la promotion de la recherche minière" },
+            { code: "70611", intitule: "Amendes au titre contrôles de l'activité minière" },
+            { code: "70711", intitule: "Autres recettes minières" },
+            { code: "7091", intitule: "Dégrèvement (recettes minières)" },
+            { code: "7092", intitule: "Remise (recettes minières)" },
+            { code: "7093", intitule: "Réduction (recettes minières)" },
+            { code: "7094", intitule: "Annulations (recettes minières)" },
+            { code: "711", intitule: "Redevance superficiaire (pétrolières)" },
+            { code: "712", intitule: "Bonus (pétrolières)" },
+            { code: "7131", intitule: "Fonds de solidarité des hydrocarbures (CAS)" },
+            { code: "7146", intitule: "Licence d'avitaillement (CAS)" },
+            { code: "7133", intitule: "Soutien au transport public urbain" },
+            { code: "7134", intitule: "Contributions administratives à la formation" },
+            { code: "714", intitule: "Produit de commercialisation des données sismiques" },
+            { code: "7171", intitule: "Mobilisation caution de bonne exécution des travaux" },
+            { code: "7172", intitule: "Dépôt de garantie" },
+            { code: "7173", intitule: "Pénalité de non-exécution des travaux" },
+            { code: "7178", intitule: "Autres recettes exceptionnelles" },
+            { code: "718", intitule: "Autres recettes pétrolières" },
+            { code: "7191", intitule: "Dégrèvement d'impôt (pétrolières)" },
+            { code: "7192", intitule: "Remise (pétrolières)" },
+            { code: "7193", intitule: "Réduction (pétrolières)" },
+            { code: "7194", intitule: "Annulations (pétrolières)" },
+            { code: "721111", intitule: "Droit d'accès Accès forfaitaire (pêches)" },
+            { code: "721112", intitule: "Droit d'accès Accès direct du navire" },
+            { code: "72112", intitule: "Droit d'accès Pêches artisanales" },
+            { code: "72121", intitule: "Droit de pêche à l'Exportation (DPE)" },
+            { code: "72122", intitule: "Redevance exploitation SMCP" },
+            { code: "72123", intitule: "Redevance d'exploitation (pêches)" },
+            { code: "72124", intitule: "Taxe statistique sur exportation pêches" },
+            { code: "722111", intitule: "Compensation financière de l'accord RIM/UE" },
+            { code: "722112", intitule: "Contributions armateurs UE" },
+            { code: "722113", intitule: "Redevance Capture UE" },
+            { code: "722114", intitule: "Licence UE" },
+            { code: "72212", intitule: "Autres accords de pêches" },
+            { code: "722121", intitule: "Compensation financière convention libre" },
+            { code: "722122", intitule: "Contributions armateurs convention libre" },
+            { code: "722123", intitule: "Redevance Capture convention libre" },
+            { code: "722124", intitule: "Redevance thon convention libre" },
+            { code: "72311", intitule: "Droit de réception des demandes de concession" },
+            { code: "72312", intitule: "Redevance contingentement de quota" },
+            { code: "72313", intitule: "Redevance capture sur quota, régime national" },
+            { code: "7232", intitule: "Droit de consignation" },
+            { code: "7233", intitule: "Droits d'immatriculation" },
+            { code: "7234", intitule: "Droit de timbres de pêches" },
+            { code: "724", intitule: "Amendes (pêches)" },
+            { code: "725", intitule: "Loyers domaine maritime" },
+            { code: "7261", intitule: "Redevance mareyeurs collecteurs" },
+            { code: "7262", intitule: "Redevance mareyeurs distributeurs" },
+            { code: "7263", intitule: "Redevance mareyeurs exportateurs" },
+            { code: "727", intitule: "Frais de gestion des licences (CAS)" },
+            { code: "728", intitule: "Autres recettes de pêches" },
+            { code: "7291", intitule: "Dégrèvement (pêches)" },
+            { code: "7292", intitule: "Remise (pêches)" },
+            { code: "7293", intitule: "Réduction (pêches)" },
+            { code: "7294", intitule: "Annulations (pêches)" },
+            { code: "7311", intitule: "Recettes exceptionnelles des entités publiques" },
+            { code: "7331", intitule: "Licences (télécommunications)" },
+            { code: "7332", intitule: "Redevances (télécommunications)" },
+            { code: "7333", intitule: "Pénalités et amendes (télécom)" },
+            { code: "73411", intitule: "Amendes et confiscations juridictionnelles douanières" },
+            { code: "73412", intitule: "Autres amendes et confiscations juridictionnelles" },
+            { code: "7342", intitule: "Jugements" },
+            { code: "7343", intitule: "Cautions mises en jeux" },
+            { code: "7344", intitule: "Débets comptables prononcés par la Cour des Comptes" },
+            { code: "7345", intitule: "Amendes et condamnations prononcées par la Cour des Comptes" },
+            { code: "7351", intitule: "Contributions des Comptes d'Affectations Spéciales (CAS)" },
+            { code: "7352", intitule: "Contributions des Budget annexe" },
+            { code: "7358", intitule: "Autres contributions" },
+            { code: "73611", intitule: "Amendes forestières" },
+            { code: "73612", intitule: "Amendes de chasse" },
+            { code: "73613", intitule: "Amendes liées au prélèvement illicite de matériaux" },
+            { code: "73614", intitule: "Amendes liées à la pollution" },
+            { code: "73615", intitule: "Autres amendes liées à l'environnement" },
+            { code: "73616", intitule: "Amendes routières" },
+            { code: "73618", intitule: "Autres amendes" },
+            { code: "7362", intitule: "Confiscations non juridictionnelles" },
+            { code: "73631", intitule: "Pénalité de retard d'exécution des marchés publics" },
+            { code: "73638", intitule: "Autres pénalités non fiscales" },
+            { code: "7381", intitule: "Redevance occupation du domaine public" },
+            { code: "7382", intitule: "Droit de participation aux Dossiers d'Appel d'Offre" },
+            { code: "7383", intitule: "Différence sur réalisation négative" },
+            { code: "7388", intitule: "Autres recettes diverses" },
+            { code: "7391", intitule: "Dégrèvement (autres recettes non fiscales)" },
+            { code: "7392", intitule: "Remise" },
+            { code: "7393", intitule: "Réduction" },
+            { code: "7394", intitule: "Annulations" },
+            { code: "7411", intitule: "Droits de Permis d'occuper" },
+            { code: "74121", intitule: "Droits de concession provisoire urbaine" },
+            { code: "74122", intitule: "Droits de concession provisoire rurale" },
+            { code: "7413", intitule: "Produits nets de cession de terrains" },
+            { code: "742", intitule: "Produits nets de cessions d'immeubles" },
+            { code: "743", intitule: "Produits nets de cessions de mobiliers" },
+            { code: "744", intitule: "Produits nets de cession d'actif incorporels" },
+            { code: "745", intitule: "Produits nets de cession d'autres actifs non financiers" },
+            { code: "7461", intitule: "Prestations de services" },
+            { code: "7462", intitule: "Vente de biens produits ou achetés en vue de revente" },
+            { code: "7463", intitule: "Ventes de biens ou de services" },
+            { code: "7511", intitule: "Intérêts sur placement à court terme" },
+            { code: "7512", intitule: "Intérêts sur placement à LMT" },
+            { code: "7521", intitule: "Produits nets sur cessions de valeurs mobilières" },
+            { code: "7522", intitule: "Produits nets sur cessions d'autres actifs financiers" },
+            { code: "7531", intitule: "Dividendes – DAMANE ASSURANCE" },
+            { code: "7532", intitule: "Dividendes – SOMIR" },
+            { code: "7533", intitule: "Dividendes – SNDP" },
+            { code: "7534", intitule: "Dividendes – PANDB" },
+            { code: "7535", intitule: "Dividendes – PANPA" },
+            { code: "7536", intitule: "Dividendes – BCM" },
+            { code: "7537", intitule: "Dividendes – SNIM" },
+            { code: "7538", intitule: "Dividendes – MAURITEL" },
+            { code: "7539", intitule: "Autres dividendes" },
+            { code: "7541", intitule: "Rémunération de prêts" },
+            { code: "7542", intitule: "Rémunération des avances supérieures d'une année" },
+            { code: "7543", intitule: "Rémunération de garanties accordées par l'Etat" },
+            { code: "7544", intitule: "Rémunération de créances rattachées à des participations" },
+            { code: "755", intitule: "Gains de change" },
+            { code: "758", intitule: "Autres produits financiers" },
+            { code: "7611", intitule: "Dons et legs – personnes physiques" },
+            { code: "7612", intitule: "Dons et legs – personnes morales" },
+            { code: "7613", intitule: "Dons et legs – États étrangers" },
+            { code: "7618", intitule: "Dons et legs – autres organismes" },
+            { code: "7621", intitule: "Fonds de concours – personnes physiques" },
+            { code: "7622", intitule: "Fonds de concours – personnes morales" },
+            { code: "7623", intitule: "Fonds de concours – États étrangers" },
+            { code: "7628", intitule: "Fonds de concours – autres organismes" },
+            { code: "76311", intitule: "Annulation de dettes financières" },
+            { code: "76312", intitule: "Rétrocessions de dette" },
+            { code: "7632", intitule: "Autres produits" },
+            { code: "771111", intitule: "Impôt sur les traitements et salaires (hors pétrole)" },
+            { code: "771112", intitule: "Impôt sur les traitements et salaires (pétrole)" },
+            { code: "771113", intitule: "ITS – retenue à la source hors pétrole" },
+            { code: "771121", intitule: "BIC" },
+            { code: "771122", intitule: "BNC" },
+            { code: "771123", intitule: "IMF" },
+            { code: "771124", intitule: "RSI" },
+            { code: "771131", intitule: "Impôts sur les revenus fonciers – particuliers" },
+            { code: "771132", intitule: "Impôts sur les revenus fonciers – entreprises" },
+            { code: "771141", intitule: "IRCM – particuliers" },
+            { code: "771142", intitule: "IRCM – entreprises" },
+            { code: "77115", intitule: "IBAPP" },
+            { code: "771161", intitule: "Impôt sur les sociétés (IS hors pétrole)" },
+            { code: "771162", intitule: "Impôt sur les sociétés (IS pétrole)" },
+            { code: "771171", intitule: "Retenues sur les prestations rendues par les résidents" },
+            { code: "771172", intitule: "Retenues sur les prestations rendues par les non-résidents" },
+            { code: "771173", intitule: "Retenues sur les versements faites par le Trésor" },
+            { code: "771174", intitule: "Retenues sur les loyers" },
+            { code: "77121", intitule: "Taxe sur les Véhicules à moteur" },
+            { code: "77122", intitule: "Taxe d'apprentissage" },
+            { code: "77123", intitule: "Impôts directs divers" },
+            { code: "772111", intitule: "TVA-INT" },
+            { code: "772112", intitule: "TVA-SNIM" },
+            { code: "772113", intitule: "TVA-IMP" },
+            { code: "772211", intitule: "Taxes de consommation – produits pétroliers" },
+            { code: "772212", intitule: "Taxes de consommation – ciment" },
+            { code: "772218", intitule: "Autres taxes de consommation" },
+            { code: "77222", intitule: "Taxes de circulation sur les viandes" },
+            { code: "77223", intitule: "Taxes sur les Opérations Financières (TOF)" },
+            { code: "77224", intitule: "Taxes sur les produits pour la promotion de la culture et sport" },
+            { code: "772251", intitule: "Taxe sur les assurances" },
+            { code: "772252", intitule: "Taxe sur les projections cinématiques" },
+            { code: "772253", intitule: "Taxe d'aéroport" },
+            { code: "77228", intitule: "Taxes indirects non repris ailleurs" },
+            { code: "77261", intitule: "Droits de douane" },
+            { code: "77262", intitule: "Droit fiscal à l'importation" },
+            { code: "77263", intitule: "Taxe statistique" },
+            { code: "77264", intitule: "Amendes et confiscations douanières" },
+            { code: "77265", intitule: "Droits de sortie" },
+            { code: "77266", intitule: "Taxe sur les traitements informatisés" },
+            { code: "77268", intitule: "Autres taxes à l'importation" },
+            { code: "7728", intitule: "Autres taxes perçues au profit de l'Etat" },
+            { code: "77311", intitule: "Taxe unique SNIM" },
+            { code: "77312", intitule: "Redevance SAMIA" },
+            { code: "77318", intitule: "Autres taxes et redevances spécifiques" },
+            { code: "77411", intitule: "Marchés publics (droits d'enregistrement)" },
+            { code: "77412", intitule: "Baux" },
+            { code: "774131", intitule: "Mutation onéreux d'immeubles ou de droits réels immobiliers" },
+            { code: "774132", intitule: "Ventes aux enchères de biens immeubles" },
+            { code: "774133", intitule: "Échanges de biens immeubles" },
+            { code: "774138", intitule: "Autres mutations à titre onéreux de biens immeubles" },
+            { code: "774141", intitule: "Mutation de fonds de commerce ou de clientèles" },
+            { code: "774142", intitule: "Cession de droit à un bail" },
+            { code: "774143", intitule: "Cession d'actions ou de parts sociales" },
+            { code: "774144", intitule: "Vente publique de biens meubles" },
+            { code: "774148", intitule: "Autres mutations à titre onéreux de biens meubles" },
+            { code: "77415", intitule: "Actes afférents aux sociétés" },
+            { code: "774161", intitule: "Partages de biens meubles et immeubles" },
+            { code: "774162", intitule: "Donations entre vifs" },
+            { code: "77417", intitule: "Droits fixes d'enregistrement" },
+            { code: "77418", intitule: "Autres droits d'enregistrement" },
+            { code: "774211", intitule: "Actes soumis au timbre (dimension du papier)" },
+            { code: "774221", intitule: "Connaissement de transport maritime" },
+            { code: "774231", intitule: "CNI (droits de timbres état civil)" },
+            { code: "774232", intitule: "Passeport" },
+            { code: "774233", intitule: "Visa d'entrée et de séjour étranger" },
+            { code: "774234", intitule: "Carte de résident" },
+            { code: "774238", intitule: "Actes et extraits relatifs à l'état civil" },
+            { code: "774241", intitule: "Cartes grises" },
+            { code: "774242", intitule: "Permis de conduire" },
+            { code: "774243", intitule: "Contrôle technique" },
+            { code: "774281", intitule: "Permis de petite chasse" },
+            { code: "774282", intitule: "Délivrance du casier judiciaire" },
+            { code: "774288", intitule: "Autres actes" },
+            { code: "77431", intitule: "Immatriculation opérée aux livres fonciers" },
+            { code: "77432", intitule: "Inscriptions des actes au titre foncier" },
+            { code: "77438", intitule: "Autres droits de publicité foncière" },
+            { code: "77811", intitule: "Amendes et pénalités administratives" },
+            { code: "77812", intitule: "Amendes et pénalités (pêches)" },
+            { code: "77821", intitule: "Subventions reçues" },
+            { code: "77822", intitule: "Contributions reçues" },
+            { code: "7783", intitule: "Taxes environnementales" },
+            { code: "7784", intitule: "Taxes forestières" },
+            { code: "7788", intitule: "Autres recettes au profit de l'Etat" },
+            { code: "7791", intitule: "Dégrèvement d'impôt" },
+            { code: "7792", intitule: "Remise" },
+            { code: "7793", intitule: "Réduction" },
+            { code: "7794", intitule: "Annulations" },
+            { code: "7811", intitule: "Reprises sur amortissements des immobilisations" },
+            { code: "7812", intitule: "Reprises sur dépréciations des immobilisations" },
+            { code: "7813", intitule: "Reprises sur provisions pour risques et charges d'exploitation" },
+            { code: "78171", intitule: "Reprises sur dépréciations des stocks" },
+            { code: "78172", intitule: "Reprises sur dépréciations des créances" },
+            { code: "7861", intitule: "Reprises sur dépréciations des participations" },
+            { code: "7862", intitule: "Reprises sur dépréciations des créances rattachées" },
+            { code: "7863", intitule: "Reprises sur provisions pour risques et charges financières" },
+            { code: "7865", intitule: "Reprises sur provisions financières" },
+            { code: "791", intitule: "Production immobilisée" },
+            { code: "7921", intitule: "Transfert de charges – exploitation" },
+            { code: "7926", intitule: "Transfert de charges – financières" },
+
+            // ===== CLASSE 8 : Engagements hors bilan et valeurs inactives =====
+            { code: "801", intitule: "Engagements donnés" },
+            { code: "802", intitule: "Engagements reçus" },
+            { code: "861", intitule: "Titres et valeurs en portefeuille" },
+            { code: "862", intitule: "Titres et valeurs chez les correspondants" },
+            { code: "863", intitule: "Comptes de prise en charge" },
+        ];
+
+        // ============================================================
+        // LOGIQUE DE L'APPLICATION
+        // ============================================================
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearBtn');
+        const resultsList = document.getElementById('resultsList');
+        const resultCount = document.getElementById('resultCount');
+        const totalAccounts = document.getElementById('totalAccounts');
+        const totalCount = document.getElementById('totalCount');
+        const sortCodeBtn = document.getElementById('sortCode');
+        const sortNameBtn = document.getElementById('sortName');
+        const themeToggle = document.getElementById('themeToggle');
+
+        let filtered = [...ACCOUNTS];
+        let sortMode = 'code';
+
+        // Mise à jour des compteurs
+        totalAccounts.textContent = ACCOUNTS.length;
+        totalCount.textContent = ACCOUNTS.length;
+
+        function getClassBadge(code) {
+            const first = code.charAt(0);
+            if (first === '1') return 'Classe 1';
+            if (first === '2') return 'Classe 2';
+            if (first === '3') return 'Classe 3';
+            if (first === '4') return 'Classe 4';
+            if (first === '5') return 'Classe 5';
+            if (first === '6') return 'Classe 6';
+            if (first === '7') return 'Classe 7';
+            if (first === '8') return 'Classe 8';
+            return '';
+        }
+
+        function filterAccounts(term) {
+            const searchTerm = term.trim().toLowerCase();
+            if (!searchTerm) {
+                filtered = [...ACCOUNTS];
+                return;
+            }
+            const isCodeSearch = /^\d/.test(searchTerm);
+            filtered = ACCOUNTS.filter(acc => {
+                if (isCodeSearch) {
+                    return acc.code.startsWith(searchTerm);
+                } else {
+                    return acc.intitule.toLowerCase().includes(searchTerm);
+                }
+            });
+        }
+
+        function sortAccounts() {
+            if (sortMode === 'code') {
+                filtered.sort((a, b) => parseFloat(a.code) - parseFloat(b.code));
+            } else {
+                filtered.sort((a, b) => a.intitule.localeCompare(b.intitule, 'fr'));
+            }
+        }
+
+        function render() {
+            resultCount.innerHTML = `<strong>${filtered.length}</strong> compte${filtered.length > 1 ? 's' : ''}`;
+            resultsList.innerHTML = '';
+
+            if (filtered.length === 0) {
+                resultsList.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <p>Aucun compte ne correspond à votre recherche</p>
+                        <p style="font-size:0.85rem; color:#94a3b8; margin-top:4px;">Essayez avec un autre code ou mot-clé</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(acc => {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                const badge = getClassBadge(acc.code);
+                div.innerHTML = `
+                    <span class="code">${acc.code}</span>
+                    <span class="name">${acc.intitule}</span>
+                    ${badge ? `<span class="badge">${badge}</span>` : ''}
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                `;
+                resultsList.appendChild(div);
+            });
+        }
+
+        function updateUI() {
+            filterAccounts(searchInput.value);
+            sortAccounts();
+            render();
+            sortCodeBtn.classList.toggle('active', sortMode === 'code');
+            sortNameBtn.classList.toggle('active', sortMode === 'name');
+        }
+
+        // --- THEME ---
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            const icon = themeToggle.querySelector('i');
+            const text = themeToggle.querySelector('span');
+            if (newTheme === 'dark') {
+                icon.className = 'fas fa-sun';
+                text.textContent = 'Clair';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                icon.className = 'fas fa-moon';
+                text.textContent = 'Thème';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Charger le thème sauvegardé
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.querySelector('i').className = 'fas fa-sun';
+            themeToggle.querySelector('span').textContent = 'Clair';
+        }
+
+        // --- ÉVÉNEMENTS ---
+        searchInput.addEventListener('input', updateUI);
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            searchInput.focus();
+            updateUI();
+        });
+
+        sortCodeBtn.addEventListener('click', () => {
+            if (sortMode !== 'code') {
+                sortMode = 'code';
+                updateUI();
+            }
+        });
+
+        sortNameBtn.addEventListener('click', () => {
+            if (sortMode !== 'name') {
+                sortMode = 'name';
+                updateUI();
+            }
+        });
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // --- INIT ---
+        updateUI();
+
+        // Focus automatique sur desktop
+        if (window.innerWidth >= 768) {
+            searchInput.focus();
+        }
+
+        // Raccourci clavier Ctrl+K / Cmd+K
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.select();
+            }
+        });
+
+    })();
+</script>
+
+</body>
+                                                                                                       </html>
